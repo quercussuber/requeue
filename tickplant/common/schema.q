@@ -4,7 +4,7 @@ quote:([]time:`timestamp$();exch:`symbol$();sym:`symbol$();bprice:`float$();bsiz
 
 order:([]time:`timestamp$();exch:`symbol$();sym:`symbol$();price:`float$();size:`float$();orderid:`guid$());
 
-syms:`$'read0`:sp500.txt;
+syms:`$'read0`:common/sp500.txt;
 
 exchs:`NYSE`NASDAQ`AMEX;
 
