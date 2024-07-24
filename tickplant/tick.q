@@ -23,6 +23,7 @@
 
 /q tick.q SRC [DST] [-p 5010] [-o h]
 system"l common/schema.q"
+system"l common/log.q"
 
 if[not system"p";system"p 5010"]
 
@@ -44,16 +45,18 @@ tick:{
         ]
     };
 
-endofday:{end d;d+:1;if[l;hclose l;l::0(`.u.ld;d)]};
+endofday:{.log.logInfo"End of day started"; end d;d+:1;if[l;hclose l;l::0(`.u.ld;d)]};
 ts:{if[d<x;if[d<x-1;system"t 0";'"more than one day?"];endofday[]]};
 
 if[system"t";
+ .log.logInfo"Ticker started in batch mode";
  .z.ts:{pub'[t;value each t];@[`.;t;@[;`sym;`g#]0#];i::j;ts .z.D};
  upd:{[t;x]
  if[not -12=type first first x;if[d<"d"$a:.z.P;.z.ts[]];a:"n"$a;x:$[0>type first x;a,x;(enlist(count first x)#a),x]];
  t insert x;if[l;l enlist (`upd;t;x);j+:1];}];
 
 if[not system"t";system"t 1000";
+ .log.logInfo"Ticker started in stream mode";
  .z.ts:{ts .z.D};
  upd:{[t;x]ts"d"$a:.z.P;
  if[not -12=type first first x;a:"n"$a;x:$[0>type first x;a,x;(enlist(count first x)#a),x]];
@@ -63,7 +66,7 @@ if[not system"t";system"t 1000";
 .u.tick[.u.LOGSUFFIX,"_",.u.INSTANCE];
 // Chain TS
 
-.z.ts:{.u.upd[`order;genOrders[10;x]]; y x}[;oldts:.z.ts]
+.z.ts:{.log.logInfo"Running tick ts";.u.upd[`order;genOrders[10;x]]; y x}[;oldts:.z.ts]
 
 \
  globals used
