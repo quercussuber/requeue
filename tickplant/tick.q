@@ -30,6 +30,7 @@ if[not system"p";system"p 5010"]
 \d .u
 INSTANCE:"one";
 LOGSUFFIX:"tplog";
+ROOT:"../"
 
 ld:{if[not type key L::`$(-10_string L),string x;.[L;();:;()]];i::j::-11!(-2;L);if[0<=type i;-2 (string L)," is a corrupt log. Truncate to length ",(string last i)," and restart";exit 1];hopen L};
 tick:{
@@ -38,7 +39,7 @@ tick:{
     @[;`sym;`g#]each t;
     d::.z.D;
     if[ l::count x;
-        L::`$":",x,"/log",10#".";
+        L::`$":",ROOT,x,"/log",10#".";
         l::ld d
         ]
     };
@@ -60,6 +61,9 @@ if[not system"t";system"t 1000";
 
 \d .
 .u.tick[.u.LOGSUFFIX,"_",.u.INSTANCE];
+// Chain TS
+
+.z.ts:{`order insert genOrders[10;x]; y x}[;oldts:.z.ts]
 
 \
  globals used
