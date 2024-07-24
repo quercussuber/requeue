@@ -20,4 +20,4 @@ sub:{if[x~`;:sub[;y]each t];if[not x in t;'x];del[x].z.w;add[x;y]}
 end:{(neg union/[w[;;0]])@\:(`.u.end;x)} 
 
 // simulate some trades happening
-ins:{[t;d] if[not t in tables`.;'`unknown_table];t insert select time:.z.p, exch, sym, price, size, side, tradeid:neg[count d]?0Ng from d}
+ins:{[t;d] if[not t in tables`.;'`unknown_table]; upd[t]select time:.z.p, exch, sym, price, size, side, tradeid:neg[count d]?0Ng from d}

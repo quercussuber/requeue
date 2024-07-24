@@ -1,7 +1,6 @@
 /q tick/r.q [host]:port[:usr:pwd] [host]:port[:usr:pwd]
 /2008.09.09 .k ->.q
 system"l common/schema.q"
-system"l common/sim.q"
 
 if[not "w"=first string .z.o;system "sleep 1"];
 
@@ -37,7 +36,4 @@ upd:insert;
         if[ not null .u.conn`tick; .u.rep .(.u.conn`tick)"(.u.sub[`;`];`.u `i`L)"];
     ];
   }
-
-.z.ts:{.u.ts[]}
-
-\t 5000
+  

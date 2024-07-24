@@ -19,7 +19,7 @@
 /2005.10.10 zero latency
 /2005.09.30 .u.i->.u.j
 
-"kdb+tick date:",string[.z.P]," version:",string[.z.K],"_",string .z.k
+"kdb+tick TICK date:",string[.z.P]," version:",string[.z.K],"_",string .z.k
 
 /q tick.q SRC [DST] [-p 5010] [-o h]
 system"l common/schema.q"
@@ -63,7 +63,7 @@ if[not system"t";system"t 1000";
 .u.tick[.u.LOGSUFFIX,"_",.u.INSTANCE];
 // Chain TS
 
-.z.ts:{`order insert genOrders[10;x]; y x}[;oldts:.z.ts]
+.z.ts:{.u.upd[`order;genOrders[10;x]]; y x}[;oldts:.z.ts]
 
 \
  globals used
