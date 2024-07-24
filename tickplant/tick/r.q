@@ -12,7 +12,8 @@ upd:insert;
 .u.conn:{hopen `$":",x}each .u.x;
 
 / end of day: save, clear, hdb reload
-.u.end:{t:tables`.;t@:where `g=attr each t@\:`sym;.Q.hdpf[.u.x `hdb;`:.;x;`sym];@[;`sym;`g#] each t;};
+HDBROOT:`$":../db"
+.u.end:{t:tables`.;t@:where `g=attr each t@\:`sym;.Q.hdpf[.u.x `hdb;HDBROOT;x;`sym];@[;`sym;`g#] each t;};
 
 / init schema and sync up from log file;cd to hdb(so client save can run)
 // TODO TP SHOULD pass logfile path
@@ -36,4 +37,3 @@ upd:insert;
         if[ not null .u.conn`tick; .u.rep .(.u.conn`tick)"(.u.sub[`;`];`.u `i`L)"];
     ];
   }
-  
