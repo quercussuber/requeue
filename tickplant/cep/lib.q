@@ -24,10 +24,20 @@ calcOHLCVV_1d:{
     from trade
     }
 
+// For sampling purposes only - not a realistic calculation
+calcMID_1m:{select mid_price:avg price by exch, sym, minute: 1 xbar time.minute from order}
+
 last_ts:.z.P;
 
 .cep.ts:{
     if[.z.P-last_ts>=00:01:00.000; ohlcvv_1m:: calcOHLCVV_1m[]];
+    mid_1m::calcMID_1m[];
     }
 
-.cep.end:{ohlcvv_1m::calcOHLCVV_1m[]; ohlcvv_1d::calcOHLCVV_1d[];}
+.cep.end:{.cep.ts[]; ohlcvv_1d::calcOHLCVV_1d[];}
+
+upd:{
+    .[insert;(x;y);{.log.logError"Insert failed for table=",string[y]," with error=",x}[;x]];
+    if[`trade=x; lastTrade,:y];
+    if[`order=x; lastOrder,:y]
+    };

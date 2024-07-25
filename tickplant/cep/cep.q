@@ -11,10 +11,11 @@ uend:.u.end;
     uend x;
     }
 
+SIM_TRADE:10; 
 "kdb+tick CEP SIM date:",string[.z.P]," version:",string[.z.K],"_",string .z.k
 .z.ts:{
     .log.logInfo"Running CEP ts";
     .u.ts[];
-    .sim.ts mod[;10]`int$`second$x;
+    .sim.ts mod[;SIM_TRADE]`int$`second$x;
     .cep.ts[];
   }
