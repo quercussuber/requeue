@@ -4,10 +4,6 @@ quote:([]time:`timestamp$();exch:`symbol$();sym:`symbol$();bprice:`float$();bsiz
 
 order:([]time:`timestamp$();exch:`symbol$();sym:`symbol$();price:`float$();size:`float$();side:`symbol$();orderid:`guid$());
 
-lastTrade:([sym:`symbol$();exch:`symbol$()] time:`timestamp$();price:`float$();size:`float$();side:`symbol$();tradeid:`guid$());
-
-lastOrder:([sym:`symbol$();exch:`symbol$()] time:`timestamp$();price:`float$();size:`float$();side:`symbol$();orderid:`guid$());
-
 syms:`$'read0`:common/sp500.txt;
 
 exchs:`NYSE`NASDAQ`AMEX;
