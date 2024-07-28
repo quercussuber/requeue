@@ -1,2 +1,5 @@
 tplog_*
 db/
+logs/
+data/
+sym_px
