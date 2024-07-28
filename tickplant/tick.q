@@ -68,7 +68,8 @@ if[not system"t";system"t 1000";
 // Chain TS
 SIM_ORDER:1000
 
-.z.ts:{.log.logInfo"Running tick ts";.u.upd[`order;genOrders[SIM_ORDER;x]]; y x}[;oldts:.z.ts]
+.tick.ts:{.u.upd[`order;genOrders[SIM_ORDER;x]]; }
+.z.ts:{.log.logInfo"Running tick ts";y x}[;oldts:.z.ts]
 
 \
  globals used
