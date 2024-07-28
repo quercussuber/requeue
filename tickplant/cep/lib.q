@@ -49,6 +49,7 @@ upd:{
         // multiple vwap horizons instead of recalculating the wavg for each horizon
         // We shall see...
         // leaving vwap here to compare results with the native wavg
+        if[99h=type y; y:enlist y];
         vwap_1s+: select wsp:size wsum price, ws:sum size, vwap:size wavg price, num_trade:count i by exch,sym,time.second from trade
             where ([]time.second;sym;exch) in select time.second,sym,exch from y
         ];
