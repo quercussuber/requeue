@@ -65,10 +65,7 @@ if[not system"t";system"t 1000";
 
 \d .
 .u.tick[.u.LOGSUFFIX,"_",.u.INSTANCE];
-// Chain TS
-SIM_ORDER:1000
 
-.tick.ts:{.u.upd[`order;genOrders[SIM_ORDER;x]]; }
 .z.ts:{.log.logInfo"Running tick ts";y x}[;oldts:.z.ts]
 
 \
