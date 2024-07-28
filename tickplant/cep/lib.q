@@ -22,7 +22,6 @@ calcOHLCVV_1d:{
     from trade
     }
 
-
 // For sampling purposes only - not a realistic calculation
 calcMID_1m:{select mid_price:avg price by exch, sym, minute: 1 xbar time.minute from order}
 
@@ -55,7 +54,6 @@ upd:{
         ];
     if[`order=x;  if[not .cep.replay; lastOrder,:y]];
     };
-
 
 // MACD
 ema12:ema[2%13;]
