@@ -1,12 +1,6 @@
 system"l tick/r.q"
-
+system"l orderbook/schema.q"
 .u.end:{'implementme}
-
-// side bid - aggressing, means selling
-order_bid:update `g#sym from ([]time:`timestamp$(); exch:`symbol$(); sym:`symbol$(); price:`float$(); size:`float$(); orderid:`guid$(); rcvtime:`timestamp$(); oid:`guid$());
-// side offer - aggressing means buying
-order_ask: order_bid
-
 
 upd:{
     if[not x=`order; `nop];
@@ -18,15 +12,17 @@ upd:{
 
 .u.conn[`tick]"(.u.sub[`order;`];`.u `i`L)";
 
-// TODO nit be functional
-.orderbook.buildl2:{`sym`exch`btime`bsize`bprice`aprice`asize`atime xcols `sym`exch xasc 0!(`sym`exch xkey `bprice xdesc select  btime:max time, bsize:sum size, btot_orders:count i by sym, exch, bprice:price from order_bid) uj (`sym`exch xkey `aprice xasc select atot_orders:count i, asize:sum size, atime:max time by sym, exch, aprice:price from order_ask)}
+.orderbook.buildl2:{r:0!(`sym`exch`bpx xdesc `bypx_norm "b") uj (`sym`exch`apx xasc bypx_norm "a");.orderbook.l2cols xcols r}
+bypx:{`sym`exch xkey select max time,sum size, tot_orders:count i by sym,exch,price from x}
+bypx_norm:{(`sym`exch,`$'x,/:("px";"time";"sz";"tot_orders")) xcol bypx $["a"~x;`order_ask;order_bid]}
+
 
 
 // find matchs for order x passed as arg
 // match `sym`exch`time`price`size`side`orderid!(`A.N;`NYSE;.z.P;10;1;`S;"G"$"5ae7962d-49f2-404d-5aec-f7c8abbae288")
 .orderbook.match:{[x]
     // find all orders that can fill x
-    as:`S;
+    as:last 1?`S`B;
     x[`side]:as;
     // this can be refactored
     rside:$[as=`S;`order_bid;`order_ask];
@@ -39,7 +35,7 @@ upd:{
     ro:first o;
     qty:ro[`size] - x`size;
     x[`price]:ro`price;
-
+    // borrowing some GOLANG verbosity....
     // NIT - not a fan of using cascade ifs, and rather use $ then else, but this is more readable since there is no inherent return value and only used for side effects
     // if both aggressor and resting are filled, remove and send Execution report
     if[qty=0;
@@ -72,20 +68,29 @@ upd:{
         ];
     }
 
-// whatever approach used here, an amend at, will do best if used properly!
+// whatever approach used here, will an amendat do best if used properly?
 .orderbook.reportTrade:{
     // send execution report
-    .log.logInfo"Sending Execution Report for orderid=",.Q.s1 x;
+    .log.logInfo"Sending Trade Report for trade=",.Q.s1 x;
     x[`time]:.z.p;
     x[`tradeid]:last -1?0Ng;
     .u.conn[`tick](`.u.upd;`trade;`time`sym`exch`price`size`side`tradeid#x);
     }
 
+// Tells the trader that there is an execution
+.orderbook.reportExecution:{'implement_me}
+
 .z.ts:{
     .log.logInfo"Running OrderBook ts";
     .u.ts[];
-    .orderbook.buildl2[]; // send this to subs?
-    .orderbook.match each 0!select by sym,exch from order_ask where  price=(min;price)fby([]sym;exch);
+    // .orderbook.buildl2[]; // send this to subs?
+    // nit - find a better way to do this
+    offers: 0!select by sym,exch from order_ask where price=(min;price)fby([]sym;exch);
+    bids: 0!select by sym,exch from order_bid where price=(max;price)fby([]sym;exch);
+    // TODO consider different approach where the two top of books are matched against
+    // each other instead of doing ToB for each side vs rest
+    // It should save on one query to order_asks and order_bids
+    .orderbook.match each offers,bids;
     }
 
 .log.setLogLevel`info;
