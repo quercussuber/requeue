@@ -7,10 +7,6 @@ if[not "w"=first string .z.o;system "sleep 1"];
 
 upd:insert;
 
-/ get the ticker plant and history ports, defaults are 5010,5012
-.u.x:`tick`hdb!.z.x,(count .z.x)_(":5010";":5012");
-.u.conn:{hopen `$":",x}each .u.x;
-
 / end of day: save, clear, hdb reload
 HDBROOT:`$":../db"
 .u.end:{t:tables`.;t@:where `g=attr each t@\:`sym;.Q.hdpf[.u.x `hdb;HDBROOT;x;`sym];@[;`sym;`g#] each t;};
@@ -19,18 +15,6 @@ HDBROOT:`$":../db"
 // log file path comes from .u.L in the ticker
 .u.rep:{(.[;();:;].)each x;if[null first y;:()];-11!y;};
 
-.z.pc:{show "Process at handle ",string[p:.u.conn ? x]," disconnected"; .u.pc p}
-
-.u.pc:{.u.conn[x]:0Ni; show .u.conn}
-
-.u.ts:{
-    if[ null .u.conn`tick;
-        show "Retrying tickerplant connection ...";
-        h:@[hopen;`$":",.u.x`tick;{show "Cannot establish tickerplant connection with ",x; 0Ni}];
-        .u.conn[`tick]: h;
-        if[ not null .u.conn`tick; .u.rep .(.u.conn`tick)"(.u.sub[`;`];`.u `i`L)"];
-    ];
-  }
 
 // remember to call .u.rep in the client
 // this is so clients can choose to override upd before 
