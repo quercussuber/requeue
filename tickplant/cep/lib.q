@@ -23,7 +23,7 @@ calcOHLCVV_1d:{
     }
 
 // For sampling purposes only - not a realistic calculation
-calcMID_1m:{select mid_price:avg price by exch, sym, minute: 1 xbar time.minute from order}
+calcTickMID:{select mid_price:avg price by exch, sym, minute: 1 xbar time.minute from order}
 
 calcVWAP:{[s;e;r]
     $[r=1; select sym, exch, second, vwap,res:r from vwap_1s where sym=s,exch=e;
@@ -32,12 +32,9 @@ calcVWAP:{[s;e;r]
 
 last_ts:.z.P;
 
-.cep.ts:{
-    if[.z.P-last_ts>=00:01:00.000; ohlcvv_1m:: calcOHLCVV_1m[]];
-    mid_1m::calcMID_1m[];
-    }
 
-.cep.end:{.cep.ts[]; ohlcvv_1d::calcOHLCVV_1d[];}
+
+// .cep.end:{.cep.ts[]; ohlcvv_1d::calcOHLCVV_1d[];}
 
 upd:{
     .[insert;(x;y);{.log.logError"Insert failed for table=",string[y]," with error=",x}[;x]];
@@ -48,9 +45,9 @@ upd:{
         // multiple vwap horizons instead of recalculating the wavg for each horizon
         // We shall see...
         // leaving vwap here to compare results with the native wavg
-        if[99h=type y; y:enlist y];
-        vwap_1s+: select wsp:size wsum price, ws:sum size, vwap:size wavg price, num_trade:count i by exch,sym,time.second from trade
-            where ([]time.second;sym;exch) in select time.second,sym,exch from y
+        // if[99h=type y; y:enlist y];
+       // vwap_1s+: select wsp:size wsum price, ws:sum size, vwap:size wavg price, num_trade:count i by exch,sym,time.second from trade
+         //   where ([]time.second;sym;exch) in select time.second,sym,exch from y
         ];
     if[`order=x;  if[not .cep.replay; lastOrder,:y]];
     };
