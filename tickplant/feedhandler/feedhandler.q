@@ -11,20 +11,32 @@ system"l feedhandler/lib.q"
 
 upd:{'implementme}
 
-SIM_ORDERS:1000
+SIM_ORDERS:100
 
 .fh.i:0;
 
+.fh.genOrders:{[n;start]
+    sims:n?0!sym_px;
+    sds:n?sides;
+    // Generating integers then dividing to get floats of set precision
+    // also forcing BUY prices to be generally smaller than SELL prices (can still be crossed)
+    px:abs sims[`px]+(-1 1)[sds]*floor[sims`px]%100;
+    sz:0.01|(n?100)%sims`px;
+    batch:(n#start;n?exchs;sims`sym;px;sz;sds;neg[n]?0Ng);
+    batch
+    }
+
 .fh.ts:{
-    batch:genOrders[SIM_ORDERS;.z.p];
+    n:SIM_ORDERS;
+    batch:.fh.genOrders[n;.z.p];
     .fh.i+:SIM_ORDERS;
     // TODO trap errors like ticker being down
     .u.conn[`tick](`.u.upd;`order;batch);
-    // Moving the market by symbol either up/down by a random amount so prices look like they are moving
-    // NIT could have used the prices already generated for batch[`price] but that doenst generate
-    // the same price movement for all symbols
-    sym_px[`px]+:@[;(last 1?count sym_px[`px])? count sym_px[`px];neg] %[;1000]count[sym_px`px]?100;
+    // Simulating market movements
+    `sym_px set select px:med price,sz:med size by sym from flip cols[order]!batch;
     };
+
+.z.exit:{`:sym_px set sym_px;}
 
 .z.ts:{
     .log.logInfo"Running Fedhandler ts";
